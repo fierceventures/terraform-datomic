@@ -45,7 +45,7 @@ module datomic {
 
 Outputs
 -------
-- 
+- dynamo_arn (arn of Dynamo table)
 
 Author
 ------
