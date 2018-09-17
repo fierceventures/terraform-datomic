@@ -1,5 +1,5 @@
 resource "aws_iam_role" "transactor" {
-  name = "${terraform.workspace}-transactors"
+  name = "${terraform.workspace}-${var.namespace}-transactors"
 
   assume_role_policy = <<EOF
 {"Version": "2012-10-17",
@@ -12,7 +12,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "transactor" {
-  name = "dynamo_access"
+  name = "${terraform.workspace}_${var.namespace}dynamo_access"
   role = "${aws_iam_role.transactor.id}"
 
   policy = <<EOF
@@ -24,7 +24,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "transactor_cloudwatch" {
-  name = "cloudwatch_access"
+  name = "${terraform.workspace}_${var.namespace}_cloudwatch_access"
   role = "${aws_iam_role.transactor.id}"
 
   policy = <<EOF
@@ -37,7 +37,7 @@ EOF
 }
 
 resource "aws_s3_bucket" "transactor_logs" {
-  bucket = "${terraform.workspace}-transactor-logs"
+  bucket = "${terraform.workspace}-${var.namespace}-transactor-logs"
   force_destroy = true
 
   lifecycle {
@@ -46,7 +46,7 @@ resource "aws_s3_bucket" "transactor_logs" {
 }
 
 resource "aws_iam_role_policy" "transactor_logs" {
-  name = "s3_logs_access"
+  name = "${terraform.workspace}_${var.namespace}_s3_logs_access"
   role = "${aws_iam_role.transactor.id}"
 
   policy = <<EOF
@@ -59,13 +59,13 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "transactor" {
-  name = "${terraform.workspace}_datomic_transactor"
+  name = "${terraform.workspace}_${var.namespace}_datomic_transactor"
   role = "${aws_iam_role.transactor.name}"
 }
 
 resource "aws_security_group" "datomic" {
   vpc_id = "${var.vpc_id}"
-  name = "${terraform.workspace}-datomic-access"
+  name = "${terraform.workspace}-${var.namespace}-datomic-access"
   description = "Allow access to the database from the default vpc"
 
   ingress {
@@ -129,7 +129,7 @@ data "template_file" "transactor_user_data" {
 }
 
 resource "aws_launch_configuration" "transactor" {
-  name_prefix = "${terraform.workspace}-transactor-"
+  name_prefix = "${terraform.workspace}-${var.namespace}-transactor-"
   image_id = "${data.aws_ami.transactor.id}"
   instance_type = "${var.transactor_instance_type}"
   iam_instance_profile = "${aws_iam_instance_profile.transactor.name}"
@@ -153,7 +153,7 @@ resource "aws_autoscaling_group" "transactors" {
   vpc_zone_identifier = [
     "${var.subnet}"
   ]
-  name = "${terraform.workspace}_transactors"
+  name = "${terraform.workspace}_${var.namespace}_transactors"
   max_size = "${var.transactors}"
   min_size = "${var.transactors}"
   launch_configuration = "${aws_launch_configuration.transactor.name}"

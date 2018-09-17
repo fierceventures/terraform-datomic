@@ -1,5 +1,5 @@
 resource "aws_iam_role_policy" "peer_dynamo_access" {
-  name = "dynamo_access"
+  name = "${terraform.workspace}_${var.namespace}_dynamo_access"
   role = "${var.peer_role_id}"
 
   policy = <<EOF
@@ -12,7 +12,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "peer_cloudwatch_logs" {
-  name = "cloudwatch_logs"
+  name = "${terraform.workspace}_${var.namespace}_cloudwatch_logs"
   role = "${var.peer_role_id}"
 
   policy = <<EOF

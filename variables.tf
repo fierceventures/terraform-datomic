@@ -1,3 +1,8 @@
+variable "namespace" {
+  default = "default"
+  description = "The namespace to prevent name clashes"
+}
+
 variable "aws_account" {
   description = "AWS account id"
 }
