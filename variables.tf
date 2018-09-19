@@ -26,11 +26,11 @@ variable "dynamo_write_capacity" {
 }
 
 variable "peer_role_id" {
-  description = "The Elastic Beanstalk role id"
+  description = "A list of the peer role ids"
 }
 
 variable "peer_role_name" {
-  description = "The Elastic Beanstalk role name"
+  description = "A list of the peer role names"
 }
 
 variable "region" {
